@@ -1,0 +1,15 @@
+{
+  "ERRORS": {
+    "UNAUTHORIZED": "Unauthorized",
+    "FORBIDDEN": "Forbidden",
+    "INTERNAL_SERVER_ERROR": "Internal server error",
+    "USER": {
+      "NOT_FOUND": "User not found",
+      "CONFLICT_EMAIL": "This email has already been regustered",
+      "CONFLICT_USERNAME": "This username has already been regustered"
+    },
+    "TOKEN": {
+      "ALREADY_USED": "Token was already used"
+    }
+  }
+}
