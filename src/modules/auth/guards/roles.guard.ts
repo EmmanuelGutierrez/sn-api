@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
 import { roles } from 'src/common/constants/roles.enum';
 import { ROLES_KEY } from 'src/common/decorators/roles.decorator';
@@ -23,7 +24,9 @@ export class RolesGuard implements CanActivate {
     if (!rolesData) {
       return true;
     }
-    const { user }: ReqWithUserI = context.switchToHttp().getRequest();
+
+    const ctx = GqlExecutionContext.create(context);
+    const { user }: ReqWithUserI = ctx.getContext().req;
     const isAuth = rolesData.some((r) => r === user.role);
     if (!isAuth) {
       throw new UnauthorizedException('Your role is wrong');

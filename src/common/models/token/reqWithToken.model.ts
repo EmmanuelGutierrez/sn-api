@@ -1,6 +1,10 @@
 import { Request } from 'express';
-import { tokenI } from './token.model';
+import { tokenInfoI } from './token.model';
+
+export interface CtxWithUserI {
+  req: ReqWithUserI;
+}
 
 export interface ReqWithUserI extends Request {
-  user: tokenI;
+  user: tokenInfoI;
 }
