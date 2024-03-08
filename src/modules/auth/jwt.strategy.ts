@@ -3,10 +3,10 @@ import { ConfigType } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { config } from '../../common/config/config';
-import { tokenI } from 'src/common/models/token/token.model';
+import { tokenInfoI } from 'src/common/models/token/token.model';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @Inject(config.KEY)
     private readonly configService: ConfigType<typeof config>, //private readonly userService: UserService,
@@ -18,7 +18,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  private validate(payload: tokenI) {
+  validate(payload: tokenInfoI) {
+    //if (!payload) throw new UnauthorizedException('no auth');
     return payload;
   }
 }

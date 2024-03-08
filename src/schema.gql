@@ -1,0 +1,98 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  _id: ID!
+  name: String!
+  username: String!
+  email: String!
+  password: String!
+  profile_image: String!
+  birth_date: Float!
+  role: roles!
+  following: [User!]!
+  followers: [User!]!
+}
+
+"""Indicates the user role"""
+enum roles {
+  ADMIN
+  USER
+}
+
+type Post {
+  _id: ID!
+  type: postTypes!
+  title: String!
+  body: String!
+  reactions: [User!]!
+  comments: [Post!]!
+  tags: [String!]!
+  images: [String!]!
+  user: User!
+}
+
+"""post type"""
+enum postTypes {
+  POST
+  COMMENT
+}
+
+type PostDataReturnDto {
+  page: Float!
+  inThisPage: Float!
+  total: Float!
+  data: [Post!]!
+}
+
+type TokenReturnDto {
+  token: String!
+}
+
+type Query {
+  allPosts(params: FilterDto!): PostDataReturnDto!
+  me(params: FilterDto!): PostDataReturnDto!
+  getOne(id: String!): Post!
+  getComments(id: String!): Post!
+  users: [User!]!
+}
+
+input FilterDto {
+  limit: Float
+  page: Float
+  tags: [String!]
+}
+
+type Mutation {
+  createPost(data: CreatePostDto!): Post!
+  updatePost(data: UpdatePostDto!): Post!
+  updateReaction(id: String!): Post!
+  comment(data: CreatePostDto!, id: String!): Post!
+  login(loginUserInput: LoginInputDto!): TokenReturnDto!
+  register(data: CreateUserDto!): TokenReturnDto!
+}
+
+input CreatePostDto {
+  title: String!
+  body: String!
+  tags: [String!]
+}
+
+input UpdatePostDto {
+  id: String!
+}
+
+input LoginInputDto {
+  username: String!
+  password: String!
+}
+
+input CreateUserDto {
+  name: String!
+  username: String!
+  email: String!
+  password: String!
+  profile_image: String
+  birth_date: Float
+}
