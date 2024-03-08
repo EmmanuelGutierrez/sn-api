@@ -6,15 +6,14 @@ import { FilterQuery, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterDto } from './dto/filter.dto';
 import { User } from '../user/entities/user.entity';
-import { CommentPostDto } from './dto/comment-post.dto';
-import { MessageService } from './message/message.service';
+import { postTypes } from 'src/common/constants/post-types.enum';
+//import { MessageService } from './message/message.service';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectModel(Post.name)
-    private postModel: Model<Post>,
-    private messageService: MessageService,
+    private postModel: Model<Post> /* private messageService: MessageService, */,
   ) {}
   async create(createPostDto: CreatePostDto, userId: string) {
     const post = await this.postModel.create({
@@ -29,7 +28,13 @@ export class PostService {
     const posts = await this.postModel
       .find()
       .skip((page - 1) * limit)
-      .limit(limit);
+      .limit(limit)
+      .populate([
+        {
+          path: 'user',
+          model: User.name,
+        },
+      ]);
 
     const total = await this.postModel.countDocuments();
     return { page, inThisPage: posts.length, total, data: posts };
@@ -60,12 +65,10 @@ export class PostService {
       {
         path: 'reactions',
         model: User.name,
-        select: ['id', 'first_name', 'last_name'],
       },
       {
         path: 'user',
         model: User.name,
-        select: ['id', 'first_name', 'last_name'],
       },
     ]);
     if (!post) {
@@ -74,7 +77,7 @@ export class PostService {
     return post;
   }
 
-  async update(id: string, updatePostDto: UpdatePostDto, userId: string) {
+  async update({ id, ...updatePostDto }: UpdatePostDto, userId: string) {
     const updatedPlanificatedMovement = await this.postModel
       .findOneAndUpdate(
         { $and: [{ user: userId }, { _id: id }] },
@@ -110,20 +113,23 @@ export class PostService {
     return `This action removes a #${id} post`;
   }
 
-  async commentPost(id: string, userId: string, data: CommentPostDto) {
+  async commentPost(id: string, userId: string, data: CreatePostDto) {
     const post = await this.findOne(id);
-
-    const res = await this.messageService.create(
-      { body: data.body, post: post.id },
-      userId,
-    );
+    const res = await this.postModel.create({
+      user: userId,
+      type: postTypes.COMMENT,
+      ...data,
+    });
+    post.comments.push(res);
 
     return res;
   }
 
   async getCommentsPost(id: string) {
-    const post = await this.findOne(id);
-    const comments = await this.messageService.findAllPost(post.id);
+    const comments = await this.postModel.findById(id).populate([
+      { path: 'user', model: User.name },
+      { path: 'comments', model: Post.name },
+    ]);
     return comments;
   }
 }
