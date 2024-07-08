@@ -11,6 +11,7 @@ import { I18nModule, QueryResolver, AcceptLanguageResolver } from 'nestjs-i18n';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -59,8 +60,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
     PostModule,
     UserModule,
     AuthModule,
+    CloudinaryModule,
   ],
   controllers: [],
-  providers: [],
 })
 export class AppModule {}
