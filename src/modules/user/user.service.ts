@@ -26,10 +26,12 @@ export class UserService {
         this.i18nService.t('events.ERRORS.USER.CONFLICT_EMAIL'),
       );
     }
+
     const hashPassword = await bcrypt.hash(password, 10);
-    const user = await this.userModel.create({
+    const user: User = await this.userModel.create({
       ...data,
       password: hashPassword,
+      //profile_image: fileName,
     });
     return user;
   }

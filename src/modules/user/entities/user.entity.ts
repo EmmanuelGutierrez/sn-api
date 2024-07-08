@@ -21,6 +21,10 @@ export class User extends Document {
   @Prop({ type: String, required: true, unique: true })
   email: string;
 
+  @Field(() => String, { nullable: true })
+  @Prop({ type: String })
+  profile_image: string;
+
   @Field(() => String)
   @Prop({
     type: String,
@@ -29,10 +33,6 @@ export class User extends Document {
     select: false,
   })
   password: string;
-
-  @Field(() => String)
-  @Prop({ type: String })
-  profile_image: string;
 
   @Field(() => Number)
   @Prop({ type: Number })

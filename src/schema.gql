@@ -7,8 +7,8 @@ type User {
   name: String!
   username: String!
   email: String!
+  profile_image: String
   password: String!
-  profile_image: String!
   birth_date: Float!
   role: roles!
   following: [User!]!
@@ -93,6 +93,5 @@ input CreateUserDto {
   username: String!
   email: String!
   password: String!
-  profile_image: String
   birth_date: Float
 }

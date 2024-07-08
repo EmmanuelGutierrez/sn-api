@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+
 import {
   IsEmail,
   IsNotEmpty,
@@ -6,6 +7,8 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
+//import { GraphQLUpload } from 'graphql-upload';
+//import { FileUpload } from 'src/common/models/file-upload.model';
 
 @InputType()
 export class CreateUserDto {
@@ -29,13 +32,16 @@ export class CreateUserDto {
   @IsNotEmpty()
   password: string;
 
-  @Field(() => String, { nullable: true })
+  /* @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  profile_image: string;
+  profile_image: string; */
 
   @Field(() => Number, { nullable: true })
   @IsString()
   @IsOptional()
   birth_date: number;
+
+  /* @Field(() => GraphQLUpload, { nullable: true })
+  profile_image: Promise<FileUpload>; */
 }

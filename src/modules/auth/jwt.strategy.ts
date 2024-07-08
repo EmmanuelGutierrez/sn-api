@@ -19,7 +19,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(payload: tokenInfoI) {
-    //if (!payload) throw new UnauthorizedException('no auth');
     return payload;
   }
 }
