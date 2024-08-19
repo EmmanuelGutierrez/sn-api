@@ -28,7 +28,7 @@ export class PostResolver {
     return this.postService.findAll(params);
   }
 
-  @Query(() => PostDataReturnDto, { name: 'me' })
+  @Query(() => PostDataReturnDto, { name: 'mePosts' })
   findMe(
     @Args('params') params: FilterDto,
     @CurrentUser() tokenData: tokenInfoI,

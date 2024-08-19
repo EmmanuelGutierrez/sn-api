@@ -1,14 +1,6 @@
-import {
-  Controller,
-  FileTypeValidator,
-  Get,
-  ParseFilePipe,
-  Post,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { UserService } from './user.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -23,9 +15,10 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Post('get-all')
+  /* @Post('upload-image')
   @UseInterceptors(FileInterceptor('file'))
   uploadImage(
+    @Body() body: CreateUserDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -37,8 +30,8 @@ export class UserController {
     )
     file: Express.Multer.File,
   ) {
-    return this.userService.findAll();
-  }
+    return this.userService.uploadProfileImage(file);
+  } */
 
   /*  @Get(':id')
   findOne(@Param('id') id: string) {

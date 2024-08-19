@@ -7,19 +7,40 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterDto } from './dto/filter.dto';
 import { User } from '../user/entities/user.entity';
 import { postTypes } from 'src/common/constants/post-types.enum';
+import { FileService } from '../file/file.service';
 //import { MessageService } from './message/message.service';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectModel(Post.name)
-    private postModel: Model<Post> /* private messageService: MessageService, */,
+    private postModel: Model<Post>,
+    private fileService: FileService,
   ) {}
   async create(createPostDto: CreatePostDto, userId: string) {
     const post = await this.postModel.create({
       ...createPostDto,
       user: userId,
     });
+    return post;
+  }
+
+  async createWithFiles(
+    createPostDto: CreatePostDto,
+    userId: string,
+    filesData: Express.Multer.File[],
+  ) {
+    const post = await this.postModel.create({
+      ...createPostDto,
+      user: userId,
+    });
+
+    const files = await this.fileService.createMany(
+      filesData,
+      post.id,
+      `posts/files/${userId}`,
+    );
+    console.log(files);
     return post;
   }
 

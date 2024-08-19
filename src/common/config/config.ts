@@ -14,5 +14,10 @@ export const config = registerAs('config', () => {
       apiKey: process.env.API_KEY,
       jwtSecret: process.env.JWT_SECRET,
     },
+    cloudinary: {
+      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+    },
   };
 });

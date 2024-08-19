@@ -12,6 +12,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
+import { FileModule } from './modules/file/file.module';
 
 @Module({
   imports: [
@@ -21,13 +22,16 @@ import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
       isGlobal: true,
       validationSchema: Joi.object({
         API_KEY: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
+        CLOUDINARY_API_KEY: Joi.string().required(),
+        CLOUDINARY_API_SECRET: Joi.string().required(),
+        CLOUDINARY_CLOUD_NAME: Joi.string().required(),
         DATABASE_NAME: Joi.string().required(),
         DATABASE_PORT: Joi.number().required(),
         DATABASE_HOST: Joi.string().required(),
         DATABASE_USER: Joi.optional(),
         DATABASE_PASS: Joi.optional(),
         DATABASE_CONNECTION: Joi.string().required(),
-        JWT_SECRET: Joi.string().required(),
       }),
     }),
     I18nModule.forRoot({
@@ -61,6 +65,7 @@ import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
     UserModule,
     AuthModule,
     CloudinaryModule,
+    FileModule,
   ],
   controllers: [],
 })

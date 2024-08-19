@@ -2,14 +2,27 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type File {
+  _id: ID!
+  asset_id: String
+  public_id: String!
+  format: String!
+  resource_type: String!
+  bytes: Float!
+  url: String!
+  secure_url: String!
+  folder: String
+  original_filename: String!
+}
+
 type User {
   _id: ID!
   name: String!
   username: String!
   email: String!
-  profile_image: String
+  profile_image: File
   password: String!
-  birth_date: Float!
+  birth_date: Float
   role: roles!
   following: [User!]!
   followers: [User!]!
@@ -29,7 +42,7 @@ type Post {
   reactions: [User!]!
   comments: [Post!]!
   tags: [String!]!
-  images: [String!]!
+  images: [File!]
   user: User!
 }
 
@@ -52,10 +65,12 @@ type TokenReturnDto {
 
 type Query {
   allPosts(params: FilterDto!): PostDataReturnDto!
-  me(params: FilterDto!): PostDataReturnDto!
+  mePosts(params: FilterDto!): PostDataReturnDto!
   getOne(id: String!): Post!
   getComments(id: String!): Post!
+  allFiles: [File!]!
   users: [User!]!
+  me: User!
 }
 
 input FilterDto {

@@ -7,7 +7,6 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-//import { GraphQLUpload } from 'graphql-upload';
 //import { FileUpload } from 'src/common/models/file-upload.model';
 
 @InputType()
@@ -32,16 +31,13 @@ export class CreateUserDto {
   @IsNotEmpty()
   password: string;
 
-  /* @Field(() => String, { nullable: true })
+  /* @Field(() => graphqlUploadExpress, { nullable: true })
   @IsString()
   @IsOptional()
-  profile_image: string; */
+  profile_image: Promise<FileUpload>; */
 
   @Field(() => Number, { nullable: true })
   @IsString()
   @IsOptional()
   birth_date: number;
-
-  /* @Field(() => GraphQLUpload, { nullable: true })
-  profile_image: Promise<FileUpload>; */
 }
