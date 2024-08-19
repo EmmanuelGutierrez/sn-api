@@ -8,9 +8,11 @@ import { ConfigType } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthResolver } from './auth.resolver';
 import { LocalStrategy } from './local.strategy';
+import { AuthController } from './auth.controller';
 
 @Module({
   providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],
+  controllers: [AuthController],
   imports: [
     UserModule,
     PassportModule,

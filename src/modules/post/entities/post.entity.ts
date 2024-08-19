@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { postTypes } from 'src/common/constants/post-types.enum';
+import { File } from 'src/modules/file/entities/file.entity';
 import { User } from 'src/modules/user/entities/user.entity';
 
 @ObjectType()
@@ -42,9 +43,13 @@ export class Post extends Document {
   @Prop({ type: [String] })
   tags: string[];
 
-  @Field(() => [String])
+  /* @Field(() => [String])
   @Prop({ type: [String] })
-  images: string[];
+  images: string[]; */
+
+  @Field(() => [File], { nullable: true })
+  @Prop({ type: [Types.ObjectId], ref: File.name })
+  images?: File[] | Types.ObjectId[];
 
   @Field(() => User)
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })

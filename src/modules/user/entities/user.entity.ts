@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { roles } from 'src/common/constants/roles.enum';
+import { File } from 'src/modules/file/entities/file.entity';
 
 @ObjectType()
 @Schema({ timestamps: { createdAt: true, updatedAt: true } })
@@ -21,9 +22,9 @@ export class User extends Document {
   @Prop({ type: String, required: true, unique: true })
   email: string;
 
-  @Field(() => String, { nullable: true })
-  @Prop({ type: String })
-  profile_image: string;
+  @Field(() => File, { nullable: true })
+  @Prop({ type: Types.ObjectId, ref: File.name })
+  profile_image?: File | Types.ObjectId;
 
   @Field(() => String)
   @Prop({
@@ -34,7 +35,7 @@ export class User extends Document {
   })
   password: string;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   @Prop({ type: Number })
   birth_date: number;
 
