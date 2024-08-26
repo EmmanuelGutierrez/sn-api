@@ -43,6 +43,14 @@ export class File {
   @Field(() => String)
   @Prop({ type: String, required: true })
   original_filename: string;
+
+  @Field(() => Number)
+  @Prop({ type: Number })
+  createdAt: number;
+
+  @Field(() => Number)
+  @Prop({ type: Number })
+  updatedAt: number;
 }
 
 export const FileSchema = SchemaFactory.createForClass(File);

@@ -13,6 +13,14 @@ type File {
   secure_url: String!
   folder: String
   original_filename: String!
+  createdAt: Float!
+  updatedAt: Float!
+}
+
+type FollowUserDto {
+  _id: ID!
+  user: User!
+  followDate: Float!
 }
 
 type User {
@@ -21,11 +29,12 @@ type User {
   username: String!
   email: String!
   profile_image: File
-  password: String!
   birth_date: Float
+  createdAt: Float!
+  updatedAt: Float!
   role: roles!
-  following: [User!]!
-  followers: [User!]!
+  following: [FollowUserDto!]!
+  followers: [FollowUserDto!]!
 }
 
 """Indicates the user role"""
@@ -44,6 +53,8 @@ type Post {
   tags: [String!]!
   images: [File!]
   user: User!
+  createdAt: Float!
+  updatedAt: Float!
 }
 
 """post type"""
@@ -84,6 +95,7 @@ type Mutation {
   updatePost(data: UpdatePostDto!): Post!
   updateReaction(id: String!): Post!
   comment(data: CreatePostDto!, id: String!): Post!
+  followUser(userToFollowId: String!): Boolean!
   login(loginUserInput: LoginInputDto!): TokenReturnDto!
   register(data: CreateUserDto!): TokenReturnDto!
 }
