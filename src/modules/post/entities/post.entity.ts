@@ -54,6 +54,14 @@ export class Post extends Document {
   @Field(() => User)
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   user: User;
+
+  @Field(() => Number)
+  @Prop({ type: Number })
+  createdAt: number;
+
+  @Field(() => Number)
+  @Prop({ type: Number })
+  updatedAt: number;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

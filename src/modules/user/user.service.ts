@@ -13,6 +13,8 @@ import { I18nTranslations } from 'src/common/models/i18n.generated';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FileService } from '../file/file.service';
 import { File } from '../file/entities/file.entity';
+import { FollowUserDto } from './dto/follow-user.dto';
+import { toTimestamp } from 'src/common/utils/ToTimestamp';
 
 @Injectable()
 export class UserService {
@@ -52,13 +54,85 @@ export class UserService {
   }
 
   async getOneById(userId: string) {
-    const user = await this.userModel.findById(userId);
+    const user = await this.userModel.findById(userId).populate([
+      {
+        path: 'following.user',
+        model: User.name,
+      },
+      {
+        path: 'followers.user',
+        model: User.name,
+      },
+    ]);
     if (!user) {
       throw new ConflictException(
         this.i18nService.t('events.ERRORS.USER.NOT_FOUND'),
       );
     }
+    console.log(user);
     return user;
+  }
+
+  async followUser(userId: string, userToFollowId: string) {
+    console.log(userId, userToFollowId);
+    // await this.getOneById(userId);
+    // const user = await this.userModel.find({
+    //   'following.userId': { $nin: [userToFollowId] },
+    //   _id: userId,
+    // });
+    // console.log(user);
+    // await this.getOneById(userToFollowId);
+
+    const user = await this.getOneById(userId);
+    const userToFollow = await this.getOneById(userToFollowId);
+
+    const followingIndex = user.following.findIndex(
+      (f) => f.user._id === userToFollowId,
+    );
+    const follwerIndex = userToFollow.followers.findIndex(
+      (f) => f.user._id === userId,
+    );
+    if (followingIndex !== -1 && follwerIndex !== -1) {
+      user.following.splice(followingIndex, 1);
+      userToFollow.followers.splice(follwerIndex, 1);
+      await user.save();
+      await userToFollow.save();
+      return true;
+    } else {
+      const dateNow = toTimestamp(new Date());
+
+      const res = await this.userModel.bulkWrite([
+        {
+          updateOne: {
+            filter: { _id: userToFollowId },
+            update: {
+              $push: {
+                followers: {
+                  user: user,
+                  followDate: dateNow,
+                },
+              },
+            },
+          },
+        },
+        {
+          updateOne: {
+            filter: { _id: userId },
+            update: {
+              $push: {
+                following: {
+                  user: userToFollow,
+                  followDate: dateNow,
+                },
+              },
+            },
+          },
+        },
+      ]);
+      console.log(res);
+    }
+
+    return true;
   }
 
   /* async uploadProfileImage(file: Express.Multer.File) {
