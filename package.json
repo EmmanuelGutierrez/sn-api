@@ -37,6 +37,8 @@
     "class-validator": "^0.14.1",
     "cloudinary": "^2.2.0",
     "graphql": "^16.8.1",
+    "graphql-redis-subscriptions": "^2.6.1",
+    "graphql-subscriptions": "^2.0.0",
     "graphql-upload": "^16.0.2",
     "joi": "^17.12.2",
     "mongoose": "^8.2.0",
@@ -45,6 +47,7 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "redis": "^4.7.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },

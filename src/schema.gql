@@ -46,7 +46,7 @@ enum roles {
 type Post {
   _id: ID!
   type: postTypes!
-  title: String!
+  title: String
   body: String!
   reactions: [User!]!
   comments: [Post!]!
@@ -75,13 +75,13 @@ type TokenReturnDto {
 }
 
 type Query {
+  users: [User!]!
+  me: User!
+  allFiles: [File!]!
   allPosts(params: FilterDto!): PostDataReturnDto!
   mePosts(params: FilterDto!): PostDataReturnDto!
   getOne(id: String!): Post!
   getComments(id: String!): Post!
-  allFiles: [File!]!
-  users: [User!]!
-  me: User!
 }
 
 input FilterDto {
@@ -91,23 +91,13 @@ input FilterDto {
 }
 
 type Mutation {
+  login(loginUserInput: LoginInputDto!): TokenReturnDto!
+  register(data: CreateUserDto!): TokenReturnDto!
+  followUser(userToFollowId: String!): Boolean!
   createPost(data: CreatePostDto!): Post!
   updatePost(data: UpdatePostDto!): Post!
   updateReaction(id: String!): Post!
   comment(data: CreatePostDto!, id: String!): Post!
-  followUser(userToFollowId: String!): Boolean!
-  login(loginUserInput: LoginInputDto!): TokenReturnDto!
-  register(data: CreateUserDto!): TokenReturnDto!
-}
-
-input CreatePostDto {
-  title: String!
-  body: String!
-  tags: [String!]
-}
-
-input UpdatePostDto {
-  id: String!
 }
 
 input LoginInputDto {
@@ -121,4 +111,18 @@ input CreateUserDto {
   email: String!
   password: String!
   birth_date: Float
+}
+
+input CreatePostDto {
+  title: String
+  body: String!
+  tags: [String!]
+}
+
+input UpdatePostDto {
+  id: String!
+}
+
+type Subscription {
+  subNewPosts: Post!
 }

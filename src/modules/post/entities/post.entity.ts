@@ -15,8 +15,8 @@ export class Post extends Document {
   @Prop({ type: String, enum: postTypes, default: postTypes.POST })
   type: postTypes;
 
-  @Field(() => String)
-  @Prop({ type: String, required: true })
+  @Field(() => String, { nullable: true })
+  @Prop({ type: String })
   title: string;
 
   @Field(() => String)

@@ -3,8 +3,8 @@ import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreatePostDto {
-  @Field(() => String)
-  @IsNotEmpty()
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsString()
   title: string;
 

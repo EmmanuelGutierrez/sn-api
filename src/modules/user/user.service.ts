@@ -69,7 +69,6 @@ export class UserService {
         this.i18nService.t('events.ERRORS.USER.NOT_FOUND'),
       );
     }
-    console.log(user);
     return user;
   }
 
