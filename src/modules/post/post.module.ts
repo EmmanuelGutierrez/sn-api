@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PostResolver } from './post.resolver';
 import { FileModule } from '../file/file.module';
 import { PostController } from './post.controller';
+import { RedisPubSubModule } from '../redis-pub-sub/redis-pub-sub.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PostController } from './post.controller';
       },
     ]),
     FileModule,
+    RedisPubSubModule,
     /* MessageModule, */
   ],
   providers: [PostService, PostResolver],

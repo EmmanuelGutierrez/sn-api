@@ -20,8 +20,8 @@ export function getAuthHeader(context: ExecutionContext): string {
 export const CurrentUser = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {
     const ctx = GqlExecutionContext.create(context);
-    const request = ctx.getContext().req;
-    //console.log(request);
-    return request.user;
+    const request = ctx.getContext();
+    const user = request.req.user ?? request.extra.user;
+    return user;
   },
 );

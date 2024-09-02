@@ -83,7 +83,4 @@ export class User extends Document {
 // UserSchema.pre
 
 export const UserSchema = SchemaFactory.createForClass(User);
-/* UserSchema.index(
-  { 'followers.userId': 1, 'following.userId': 1 },
-  { unique: true },
-); */
+UserSchema.index({ name: 1 });

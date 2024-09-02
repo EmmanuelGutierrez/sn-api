@@ -8,6 +8,8 @@ import { FilterDto } from './dto/filter.dto';
 import { User } from '../user/entities/user.entity';
 import { postTypes } from 'src/common/constants/post-types.enum';
 import { FileService } from '../file/file.service';
+import { RedisPubSubService } from '../redis-pub-sub/redis-pub-sub.service';
+import { SUB_NEW_POSTS } from 'src/common/constants/redis/sub-new-posts';
 //import { MessageService } from './message/message.service';
 
 @Injectable()
@@ -16,11 +18,16 @@ export class PostService {
     @InjectModel(Post.name)
     private postModel: Model<Post>,
     private fileService: FileService,
+    private redisPubSub: RedisPubSubService,
   ) {}
   async create(createPostDto: CreatePostDto, userId: string) {
     const post = await this.postModel.create({
       ...createPostDto,
       user: userId,
+    });
+    console.log(post);
+    this.redisPubSub.publish(SUB_NEW_POSTS, {
+      [SUB_NEW_POSTS]: post,
     });
     return post;
   }
@@ -60,6 +67,24 @@ export class PostService {
     const total = await this.postModel.countDocuments();
     return { page, inThisPage: posts.length, total, data: posts };
   }
+
+  // async subFindAll(/* params: FilterDto */) {
+  //   try {
+  //     // const posts = await this.postModel.find();
+  //     // const total = await this.postModel.countDocuments();
+  //     // return { page, inThisPage: posts.length, total, data: posts };
+  //     this.redisPubSub.publish(SUB_NEW_POSTS, {
+  //       [SUB_NEW_POSTS]: {
+  //         page: 1,
+  //         inThisPage: 3,
+  //         total: 4,
+  //         // data: posts,
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   async me(params: FilterDto, userId: string) {
     const { limit = 10, page = 1, tags } = params;

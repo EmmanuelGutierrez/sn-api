@@ -6,6 +6,7 @@ import { User } from '../user/entities/user.entity';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from 'src/common/models/i18n.generated';
+import { tokenInfoI } from 'src/common/models/token/token.model';
 
 @Injectable()
 export class AuthService {
@@ -36,5 +37,11 @@ export class AuthService {
   generateJWT(user: User) {
     const payload = { role: user.role, email: user.email, id: user.id };
     return this.jwtService.sign(payload);
+  }
+
+  decodeToken(token: string) {
+    const tokenString = token.split(' ')[1];
+    const decodeToken = this.jwtService.decode<tokenInfoI>(tokenString);
+    return decodeToken;
   }
 }

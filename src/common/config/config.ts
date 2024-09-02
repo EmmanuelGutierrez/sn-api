@@ -19,5 +19,11 @@ export const config = registerAs('config', () => {
       CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
       CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
     },
+    redis: {
+      host: process.env.REDIS_HOST,
+      password: process.env.REDIS_PASSWORD,
+      port: Number(process.env.REDIS_PORT),
+      db: Number(process.env.REDIS_DB),
+    },
   };
 });

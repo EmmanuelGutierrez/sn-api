@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, UnauthorizedException } from '@nestjs/common';
 import { config } from './common/config/config';
 import { join } from 'path';
 import * as Joi from 'joi';
@@ -13,6 +13,10 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 import { FileModule } from './modules/file/file.module';
+import { RedisPubSubModule } from './modules/redis-pub-sub/redis-pub-sub.module';
+import { AuthService } from './modules/auth/auth.service';
+import { contextGraphqlWs } from './common/models/context-graphql-ws';
+import { ToLowerCaseKeys } from './common/utils/ToLowerCaseKeys';
 
 @Module({
   imports: [
@@ -32,6 +36,10 @@ import { FileModule } from './modules/file/file.module';
         DATABASE_USER: Joi.optional(),
         DATABASE_PASS: Joi.optional(),
         DATABASE_CONNECTION: Joi.string().required(),
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.number().required(),
+        REDIS_DB: Joi.number().required(),
+        REDIS_PASSWORD: Joi.string(),
       }),
     }),
     I18nModule.forRoot({
@@ -53,12 +61,42 @@ import { FileModule } from './modules/file/file.module';
         '../src/common/models/i18n.generated.ts',
       ),
     }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: false,
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      context: ({ req, res }) => ({ req, res }),
+      imports: [AuthModule],
+      inject: [AuthService],
+      useFactory: async (authService: AuthService) => {
+        return {
+          subscriptions: {
+            'graphql-ws': {
+              onConnect: (ctx: contextGraphqlWs) => {
+                const { extra, connectionParams } = ctx;
+                const AuthorizationObj: { authorization?: string } =
+                  ToLowerCaseKeys(connectionParams);
+                if (!AuthorizationObj.authorization) {
+                  throw new UnauthorizedException('No auth');
+                }
+                const user = authService.decodeToken(
+                  connectionParams.Authorization as string,
+                );
+                if (!user) {
+                  throw new UnauthorizedException('No user');
+                }
+                extra.user = user;
+                // jwtService.decode(ctx.connectionParams.Authorization as string);
+              },
+            },
+          },
+          autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+          playground: false,
+          plugins: [ApolloServerPluginLandingPageLocalDefault()],
+          installSubscriptionHandlers: true,
+          context: ({ req, res, extra }) => {
+            // console.log('req', req);
+            return { req, res, extra };
+          },
+        };
+      },
     }),
     DatabaseModule,
     PostModule,
@@ -66,6 +104,7 @@ import { FileModule } from './modules/file/file.module';
     AuthModule,
     CloudinaryModule,
     FileModule,
+    RedisPubSubModule,
   ],
   controllers: [],
 })

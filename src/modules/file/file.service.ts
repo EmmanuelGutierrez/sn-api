@@ -30,7 +30,6 @@ export class FileService {
       folder,
       type,
     );
-    console.log(cloudinaryRes);
     const file: File = await this.fileModel.create({
       bytes: cloudinaryRes.bytes,
       public_id: cloudinaryRes.public_id,

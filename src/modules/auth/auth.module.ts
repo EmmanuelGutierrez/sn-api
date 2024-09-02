@@ -13,6 +13,7 @@ import { AuthController } from './auth.controller';
 @Module({
   providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
+  exports: [AuthService],
   imports: [
     UserModule,
     PassportModule,

@@ -1,4 +1,11 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Query,
+  Resolver,
+  Subscription,
+} from '@nestjs/graphql';
 import { PostService } from './post.service';
 import { Post } from './entities/post.entity';
 import { PostDataReturnDto } from './dto/post-data-return.dto';
@@ -11,15 +18,19 @@ import { CtxWithUserI } from 'src/common/models/token/reqWithToken.model';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { tokenInfoI } from 'src/common/models/token/token.model';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { RedisPubSubService } from '../redis-pub-sub/redis-pub-sub.service';
+import { SUB_NEW_POSTS } from 'src/common/constants/redis/sub-new-posts';
+import { IsSubscription } from 'src/common/decorators/subscription.decorator';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Resolver()
 export class PostResolver {
-  constructor(private readonly postService: PostService) {}
-
+  constructor(
+    private readonly postService: PostService,
+    private readonly redisPubSub: RedisPubSubService,
+  ) {}
   @Mutation(() => Post, { name: 'createPost' })
   create(@Args('data') data: CreatePostDto, @Context() ctx: CtxWithUserI) {
-    console.log(ctx.req.user);
     return this.postService.create(data, ctx.req.user.id);
   }
 
@@ -28,12 +39,27 @@ export class PostResolver {
     return this.postService.findAll(params);
   }
 
+  @IsSubscription()
+  @Subscription(() => Post, {
+    resolve: (payload: { subNewPosts: Post }) => {
+      console.log(payload);
+      return payload.subNewPosts;
+    },
+  })
+  subNewPosts(
+    // @Args('params') params: FilterDto,
+    @CurrentUser() tokenData: tokenInfoI,
+  ) {
+    console.log('tokenData', tokenData);
+    // return this.postService.findAll(params);
+    return this.redisPubSub.asyncIterator(SUB_NEW_POSTS);
+  }
+
   @Query(() => PostDataReturnDto, { name: 'mePosts' })
   findMe(
     @Args('params') params: FilterDto,
     @CurrentUser() tokenData: tokenInfoI,
   ) {
-    console.log(tokenData);
     return this.postService.me(params, tokenData.id);
   }
 
